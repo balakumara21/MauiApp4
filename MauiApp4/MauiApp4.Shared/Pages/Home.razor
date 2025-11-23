@@ -1,14 +1,29 @@
-﻿@page "/"
+﻿@page "/Home"
 @using MauiApp4.Shared.Services
 @inject IFormFactor FormFactor
+@inject IAPIGateway aPIGateway
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>@ServiceAValue</h1>
 
 Welcome to your new app running on <em>@factor</em> using <em>@platform</em>.
 
 @code {
     private string factor => FormFactor.GetFormFactor();
     private string platform => FormFactor.GetPlatform();
+
+    string ServiceAValue = "";
+
+    protected override async Task OnAfterRenderAsync(bool firstrender)
+    {
+        if(firstrender)
+        {
+            ServiceAValue = await aPIGateway.GetAServiceValue();
+
+            StateHasChanged();
+        }
+      
+    }
+
 }

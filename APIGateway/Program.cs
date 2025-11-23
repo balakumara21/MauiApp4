@@ -3,19 +3,42 @@ using APIGateway.Filter;
 using APIGateway.Services;
 using CorrelationId.DependencyInjection;
 using CorrelationId.HttpClient;
+using DAO.Repository;
+using DAO.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using System.Data;
 using System.Text;
 
 
 
 var builder = WebApplication.CreateBuilder(args);
 
+string dbtype = builder.Configuration["DBType"];
+string connectionstring = builder.Configuration["MSSqlConnectionString"];
+
+builder.Services.AddDatabase(dbtype, connectionstring);
+
+
 builder.Services.AddCorrelationId();
 
 var configuration = builder.Configuration;
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy => policy
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+});
+
+
 builder.Services.AddTransient<ICommonService, CommonService>();
+
+builder.Services.AddTransient<ILoginService, LoginService>();
+
+builder.Services.AddTransient<IRepository, Repository>();
 
 builder.Services.AddHttpClient<IServiceA_API, ServiceA_API>(httpclient=>
 {
@@ -24,6 +47,12 @@ builder.Services.AddHttpClient<IServiceA_API, ServiceA_API>(httpclient=>
     httpclient.DefaultRequestHeaders.Add("ServiceA_Token", "123");
 
 }).AddCorrelationIdForwarding();
+
+builder.Services.AddSingleton<IDatabaseFactory>(sp =>
+    DatabaseFactory.Create(
+        builder.Configuration["Database:Type"],
+        sp
+    ));
 
 // Add services to the container.
 
@@ -96,5 +125,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+
+app.UseCors("AllowAll");
 
 app.Run();

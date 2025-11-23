@@ -18,4 +18,8 @@
     <Folder Include="API\ServiceB\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DAO\DAO.csproj" />
+  </ItemGroup>
+
 </Project>

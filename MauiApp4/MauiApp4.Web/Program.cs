@@ -1,8 +1,13 @@
+using CorrelationId.DependencyInjection;
+using CorrelationId.HttpClient;
+using MauiApp4.Shared;
 using MauiApp4.Shared.Services;
 using MauiApp4.Web.Components;
 using MauiApp4.Web.Services;
+using System.Net.Http;
 
 var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -11,7 +16,23 @@ builder.Services.AddRazorComponents()
 // Add device-specific services used by the MauiApp4.Shared project
 builder.Services.AddSingleton<IFormFactor, FormFactor>();
 
+builder.Services.AddCorrelationId();
+
+builder.Services.AddScoped<StorageService>();
+
+builder.Services.AddTransient<TokenHandler>();
+
+
+builder.Services.AddHttpClient<IAPIGateway, APIGateway>(httpclient =>
+{
+    
+    httpclient.BaseAddress = new Uri(configuration["APIGatewayBaseURL"]);
+    
+
+}).AddCorrelationIdForwarding().AddHttpMessageHandler<TokenHandler>();
+
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -31,5 +52,6 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddAdditionalAssemblies(
         typeof(MauiApp4.Shared._Imports).Assembly);
+
 
 app.Run();
