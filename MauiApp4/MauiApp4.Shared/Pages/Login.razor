@@ -1,0 +1,53 @@
+﻿@page "/"
+@using MauiApp4.Shared.Services
+@inject IAPIGateway _APIGateway
+@inject StorageService storageService
+@inject NavigationManager navigationManager
+@layout LoginLayout
+
+<h3>Login</h3>
+
+<hr />
+
+<table>
+    <tr>
+        <td><label>Enter Username</label></td>
+        <td><input type="text" placeholder="Username" id="username" class="form-control" @bind="Username" name=username /></td>
+    </tr>
+    <tr>
+        <td><label>Enter Password</label></td>
+        <td><input type="password" placeholder="Password" id="password" class="form-control" @bind="Password" name=password /></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><button type="button" id="btnLogin" @onclick="LoginEntry" class="btn btn-primary" style="float:right">Login</button></td>
+    </tr>
+</table>
+
+
+
+@code {
+    string Username = string.Empty;
+    string Password = string.Empty;
+
+    private async Task LoginEntry()
+    {
+
+        var result = await _APIGateway.postloginData(new DAO.Models.UserInfo { Username = Username, Password = Password });
+        if (result)
+        {
+            var Token = await _APIGateway.GetToken("Bala");
+
+            await storageService.Set("Token", Token);
+
+            TokenStore.Token = Token;
+
+            navigationManager.NavigateTo("/Home");
+
+        }
+    }
+}

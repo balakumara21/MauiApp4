@@ -1,4 +1,5 @@
 ﻿using APIGateway.Services;
+using DAO.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -23,5 +24,7 @@ namespace APIGateway.Controllers
         {
             return await _commonService.GetServiceA();
         }
+
+        
     }
 }

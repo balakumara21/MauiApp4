@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="APIGateway/APIGateway.csproj" />
+  <Project Path="DAO/DAO.csproj" Id="83d4c1b7-80bb-4652-8c6f-2e3bbc20444f" />
   <Project Path="MauiApp4/MauiApp4.Shared/MauiApp4.Shared.csproj" />
   <Project Path="MauiApp4/MauiApp4.Web/MauiApp4.Web.csproj" />
   <Project Path="MauiApp4/MauiApp4/MauiApp4.csproj">
